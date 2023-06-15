@@ -20,7 +20,7 @@ const BlogCard = ({ blog: { title, desc, imageUrl, likes, authorId, _id } }) => 
 
   const handleLike = async () => {
     try {
-      const res = await fetch(`https://blog-nextjs-13-sud5.vercel.app/api/blog/${_id}/like`, {
+      const res = await fetch(`http://localhost:3000/api/blog/${_id}/like`, {
         headers: {
           'Authorization': `Bearer ${session?.user?.accessToken}`
         },
@@ -52,7 +52,7 @@ const BlogCard = ({ blog: { title, desc, imageUrl, likes, authorId, _id } }) => 
           <div className={classes.left}>
             <h3>{title}</h3>
             <p>{desc}</p>
-            <span>Created By: <span>15th of June</span></span>
+            <span>Created By: <span>1th of January</span></span>
           </div>
           <div className={classes.right}>
             {blogLikes} {" "} {isLiked
