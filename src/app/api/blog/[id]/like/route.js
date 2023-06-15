@@ -1,58 +1,16 @@
 import db from "@/lib/db";
 import { verifyJwtToken } from "@/lib/jwt";
 import Blog from "@/models/Blog";
-import User from "@/models/User";
-
-export async function GET(req, ctx) {
-    await db.connect()
-
-    const id = ctx.params.id
-
-    try {
-        const blog = await Blog.findById(id).populate("authorId").select('-password')
-
-        return new Response(JSON.stringify(blog), { status: 200 })
-    } catch (error) {
-        return new Response(JSON.stringify(null), { status: 500 })
-    }
-}
 
 export async function PUT(req, ctx) {
     await db.connect()
 
     const id = ctx.params.id
-    const accessToken = req.headers.get('authorization')
+
+    const accessToken = req.headers.get("authorization")
     const token = accessToken.split(" ")[1]
 
-    const decodedToken = verifyJwtToken(token)
-
-    if (!accessToken || !decodedToken) {
-        return new Response(JSON.stringify({ error: "unauthorized (wrong or expired token)" }), { status: 403 })
-    }
-
-    try {
-        const body = await req.json()
-        const blog = await Blog.findById(id).populate('authorId')
-
-        if (blog?.authorId?._id.toString() !== decodedToken._id.toString()) {
-            return new Response(JSON.stringify({ msg: 'Only author can update his blog' }), { status: 403 })
-        }
-
-        const updatedBlog = await Blog.findByIdAndUpdate(id, { $set: { ...body } }, { new: true })
-
-        return new Response(JSON.stringify(updatedBlog), { status: 200 })
-    } catch (error) {
-        return new Response(JSON.stringify(null), { status: 500 })
-    }
-}
-
-export async function DELETE(req, ctx) {
-    await db.connect()
-
-    const id = ctx.params.id
-
-    const accessToken = req.headers.get('authorization')
-    const token = accessToken.split(' ')[1]
+    console.log(token)
 
     const decodedToken = verifyJwtToken(token)
 
@@ -61,15 +19,18 @@ export async function DELETE(req, ctx) {
     }
 
     try {
-        const blog = await Blog.findById(id).populate('authorId')
-        if (blog?.authorId?._id.toString() !== decodedToken._id.toString()) {
-            return new Response(JSON.stringify({ msg: 'Only author can delete his blog' }), { status: 403 })
+        const blog = await Blog.findById(id)
+        
+        if(blog.likes.includes(decodedToken._id)){
+          blog.likes = blog.likes.filter((id) => id.toString() !== decodedToken._id.toString())
+        } else {
+            blog.likes.push(decodedToken._id)
         }
+    
+        await blog.save()
 
-        await Blog.findByIdAndDelete(id)
-
-        return new Response(JSON.stringify({msg: 'Successfully deleted blog'}), {status: 200})
+        return new Response(JSON.stringify({msg: 'Successfully interacted with the blog'}), {status: 200})
     } catch (error) {
-        return new Response(JSON.stringify(null), { status: 500 }) 
+        return new Response(JSON.stringify(null), { status: 200 })
     }
 }
