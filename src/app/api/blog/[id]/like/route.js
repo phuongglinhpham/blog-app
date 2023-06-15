@@ -14,6 +14,9 @@ export async function PUT(req, ctx) {
 
     const decodedToken = verifyJwtToken(token)
 
+
+
+
     if (!accessToken || !decodedToken) {
         return new Response(JSON.stringify({ error: "unauthorized (wrong or expired token)" }), { status: 403 })
     }
