@@ -16,13 +16,14 @@ const Footer = () => {
         <div className={classes.col}>
           <h2>Contacts</h2>
           <span>Phone +123 456 789</span>
+          <span>Email: phuongglinhpham@gmail.com</span>
           <span>GitHub: phuongglinhpham</span>
         </div>
         <div className={classes.col}>
           <h2>Location</h2>
           <span>Continent: Asia</span>
           <span>Country: Vietnam</span>
-          <span>Current Location: Vietnam</span>
+          <span>Current Location: Hanoi</span>
         </div>
       </div>
     </footer>
